@@ -14,32 +14,60 @@ public class Lista {
     }
 
     public void insertaCabeza(ArrayList<Coordenadas> v){
-        if (pr == null) {
-            NodoL primero = new NodoL(v);
-            pr = primero;
+        if (v != null) {
+            NodoL primero;
+            if (pr == null) {
+                primero = new NodoL(v);
+                pr = primero;
+                ul = primero;
+            }
+            else {
+                primero = new NodoL(v, pr);
+                pr = primero;
+            }
         }
     }
     public void insertaCola(ArrayList<Coordenadas> v){
-        if (ul == null) {
+        if (v != null) {
             NodoL ultimo = new NodoL(v);
-            ul = ultimo;
+            if (pr == null) {
+                pr = ultimo;
+                ul = ultimo;
+            } else {
+                NodoL aux = pr;
+                while (aux.getNext() != null){
+                    aux = aux.getNext();
+                }
+                aux.cambiaNext(ultimo);
+                ul = ultimo;
+            }
         }
     }
     public void inserta(ArrayList<Coordenadas> v, int i) throws IndexOutOfBoundsException{
         NodoL nuevo = new NodoL(v);
         NodoL aux = pr;
-        if (aux != null) {
-            boolean valido = true;
-            int j;
-            for (j = 0; j < i && valido; j++) {
-                if (aux.getNext() != null) pr = aux.getNext();
-                else valido = false;
+        if ((aux != null && v != null) && i >= 0) {
+            if (i == 0){
+                insertaCabeza(v);
+            } else {
+                boolean valido = true;
+                int j;
+                for (j = 0; j < i - 1 && valido; j++) {
+                    if (aux.getNext() != null) aux = aux.getNext();
+                    else valido = false;
+                }
+                if (valido) {
+                    if (aux.getNext() == null){
+                        //aux.cambiaNext(nuevo);
+                        throw new IndexOutOfBoundsException("" + i);
+                        //Esto no estoy seguro, tutoria alicia
+                    } else {
+                        nuevo.cambiaNext(aux.getNext());
+                        aux.cambiaNext(nuevo);
+                    }
+                } else throw new IndexOutOfBoundsException("" + i);
             }
-            if (valido) {
-                nuevo.cambiaNext(aux.getNext());
-                aux.cambiaNext(nuevo);
-            } else throw new IndexOutOfBoundsException(""+j);
-        }throw new IndexOutOfBoundsException("0");
+        } else throw new IndexOutOfBoundsException(""+i);
     }
     public boolean borraCabeza(){
         if (pr != null){
@@ -52,9 +80,16 @@ public class Lista {
     public boolean borraCola(){
         /*quita el ultimo objeto (a la cola) de la lista, devolviendo true si la operacion se ha podido realizar.*/
         NodoL aux = pr;
+        if (pr == null) return false;
+        if (ul == pr) {
+            pr = null;
+            ul = null;
+            return true;
+        }
         if (aux == null) return false;
         while (aux.getNext() != null) {
             if (aux.getNext() == ul) {
+                aux.cambiaNext(null);
                 ul = aux;
                 return true;
             }
@@ -64,29 +99,31 @@ public class Lista {
     }
     public void borra(int i) throws IndexOutOfBoundsException{
         NodoL aux = pr;
-        if (aux != null) {
+        if (aux != null && i >= 0) {
             boolean valido = true;
             int j;
             for (j = 0; j < i-1 && valido; j++) {
-                if (aux.getNext() != null) pr = aux.getNext();
+                if (aux.getNext() != null) aux = aux.getNext();
                 else valido = false;
             }
             if (valido) {
-                aux.cambiaNext(aux.getNext().getNext());
+                if (aux.getNext() != null)
+                    aux.cambiaNext(aux.getNext().getNext());
+                else aux.cambiaNext(null);
             } else throw new IndexOutOfBoundsException(""+j);
         } else throw new IndexOutOfBoundsException("0");
     }
     public boolean borra(ArrayList<Coordenadas> v){
         NodoL aux = pr;
-        if (aux != null) {
+        if (aux != null && v != null) {
             boolean valido = true;
-            while (!aux.getNext().getCamino().equals(v)){
+            while (aux.getNext() != null && aux.getNext().getCamino() != null && !aux.getNext().getCamino().equals(v)){
                 if (aux.getNext() != null){
-                    pr = aux.getNext();
+                    aux = aux.getNext();
                 }
                 else valido = false;
             }
-            if (valido) {
+            if (valido && aux.getNext() != null && aux.getNext().getNext() != null) {
                 aux.cambiaNext(aux.getNext().getNext());
                 return true;
             }
@@ -96,9 +133,10 @@ public class Lista {
     public void escribeLista(){
         NodoL aux = pr;
         int j;
-        for (j = 0; aux != null; j++) {
+        for (j = 1; aux != null; j++) {
             System.out.print("camino "+j+": ");
             aux.escribeCamino();
+            System.out.println();
             aux = aux.getNext();
         }
     }
@@ -106,7 +144,7 @@ public class Lista {
         /*nos dice si v esta en la lista o no. Si esta, devuelve su posicion, en otro caso devuelve -1.*/
         NodoL aux = pr;
         int j = -1;
-        if (aux != null) {
+        if (aux != null && v != null) {
             boolean valido = true;
             for (j = 0; !aux.getNext().getCamino().equals(v); j++){
                 if (aux.getNext() != null){
@@ -122,11 +160,11 @@ public class Lista {
     }
     public ArrayList<Coordenadas> getCamino(int pos) throws IndexOutOfBoundsException{
         NodoL aux = pr;
-        if (aux != null) {
+        if (aux != null && pos >= 0) {
             boolean valido = true;
             int j;
             for (j = 0; j < pos && valido; j++) {
-                if (aux.getNext() != null) pr = aux.getNext();
+                if (aux.getNext() != null) aux = aux.getNext();
                 else valido = false;
             }
             if (valido) {
