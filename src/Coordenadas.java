@@ -21,4 +21,7 @@ public class Coordenadas {
         if (c.getFila() == fila && c.getColumna() == columna) return true;
         else return false;
     }
+    public String toString(){
+        return "("+fila+","+columna+")";
+    }
 }

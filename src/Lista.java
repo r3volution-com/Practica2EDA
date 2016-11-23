@@ -73,7 +73,10 @@ public class Lista {
         if (pr != null){
             if (pr.getNext() != null){
                 pr = pr.getNext();
-            } else pr = null;
+            } else {
+                if (pr == ul) ul = null;
+                pr = null;
+            }
             return true;
         } else return false;
     }
@@ -100,32 +103,34 @@ public class Lista {
     public void borra(int i) throws IndexOutOfBoundsException{
         NodoL aux = pr;
         if (aux != null && i >= 0) {
-            boolean valido = true;
-            int j;
-            for (j = 0; j < i-1 && valido; j++) {
-                if (aux.getNext() != null) aux = aux.getNext();
-                else valido = false;
+            if (i == 0) borraCabeza();
+            else {
+                boolean valido = true;
+                for (int j = 0; j < i-1 && valido; j++){
+                    if (aux.getNext() != null) aux = aux.getNext();
+                    else valido = false;
+                }
+                if (valido){
+                    if (aux.getNext() != null) aux.cambiaNext(aux.getNext().getNext());
+                    else throw new IndexOutOfBoundsException(""+i);
+                } else throw new IndexOutOfBoundsException(""+i);
             }
-            if (valido) {
-                if (aux.getNext() != null)
-                    aux.cambiaNext(aux.getNext().getNext());
-                else aux.cambiaNext(null);
-            } else throw new IndexOutOfBoundsException(""+j);
-        } else throw new IndexOutOfBoundsException("0");
+        } else throw new IndexOutOfBoundsException(""+i);
     }
     public boolean borra(ArrayList<Coordenadas> v){
         NodoL aux = pr;
         if (aux != null && v != null) {
-            boolean valido = true;
-            while (aux.getNext() != null && aux.getNext().getCamino() != null && !aux.getNext().getCamino().equals(v)){
-                if (aux.getNext() != null){
+            if (aux.comparaCamino(v)){
+                borraCabeza();
+                return true;
+            } else {
+                while (aux.getNext() != null) {
+                    if (aux.getNext().comparaCamino(v)){
+                        aux.cambiaNext(aux.getNext().getNext());
+                        return true;
+                    }
                     aux = aux.getNext();
                 }
-                else valido = false;
-            }
-            if (valido && aux.getNext() != null && aux.getNext().getNext() != null) {
-                aux.cambiaNext(aux.getNext().getNext());
-                return true;
             }
         }
         return false;
@@ -143,20 +148,17 @@ public class Lista {
     public int enLista(ArrayList<Coordenadas> v){
         /*nos dice si v esta en la lista o no. Si esta, devuelve su posicion, en otro caso devuelve -1.*/
         NodoL aux = pr;
-        int j = -1;
         if (aux != null && v != null) {
-            boolean valido = true;
-            for (j = 0; !aux.getNext().getCamino().equals(v); j++){
-                if (aux.getNext() != null){
-                    pr = aux.getNext();
+            for (int j = 0; aux != null && aux.getCamino() != null; j++){
+                if (!aux.comparaCamino(v)) {
+                    if (aux.getNext() != null) aux = aux.getNext();
+                    else return -1;
+                } else {
+                    return j;
                 }
-                else valido = false;
-            }
-            if (valido) {
-                return j;
             }
         }
-        return j;
+        return -1;
     }
     public ArrayList<Coordenadas> getCamino(int pos) throws IndexOutOfBoundsException{
         NodoL aux = pr;
