@@ -153,6 +153,8 @@ public class Plano {
                 }
                 linea = br.readLine();
             }
+            br.close();
+            fr.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

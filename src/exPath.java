@@ -5,7 +5,7 @@ public class exPath {
     private ArrayList<Coordenadas> camino;
     public exPath (int x, int y, ArrayList<Coordenadas> v){
         Coordenadas aux = new Coordenadas(x, y);
-        ArrayList<Coordenadas> aux2 = new ArrayList<Coordenadas>(v);
+        ArrayList<Coordenadas> aux2 = new ArrayList<>(v);
         aux2.add(aux);
         camino = aux2;
     }
