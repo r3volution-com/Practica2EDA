@@ -5,9 +5,11 @@ public class Casilla {
     private String nombre;
     private int numpuerta;
     private char puerta;
+    private boolean visitado;
     public Casilla(char a) {
         tipo = a;
         coor = null;
+        visitado = false;
     }
     public boolean setCoordenadas(int g, int n, Plano m){
         if (m == null) return false;
@@ -75,6 +77,12 @@ public class Casilla {
         cadena += "("+coor.getFila()+","+coor.getColumna()+")";
         if (tipo == 'p') cadena += ":"+puerta;
         System.out.println(cadena);
+    }
+    public void setVisitado(){
+        visitado = true;
+    }
+    public boolean getVisitado(){
+        return visitado;
     }
     public boolean equals(Casilla c){
         if (c!= null && c.getTipo() == this.getTipo()

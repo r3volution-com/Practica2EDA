@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Plano {
     private Casilla[][] pl;
     private Coordenadas dimension;
     private boolean comienzo;
+    private Casilla casillaComienzo;
     public Plano(int i, int j){
         if (i < 0) i = 3;
         if (j < 0) j = 3;
@@ -117,6 +119,7 @@ public class Plano {
                             pl[x][y] = new Casilla('c');
                             pl[x][y].setCoordenadas(x, y, this);
                             pl[x][y].setNombre(nombre);
+                            casillaComienzo = pl[x][y];
                         }
                     }
                 }
@@ -281,8 +284,61 @@ public class Plano {
         }
         return true;
     }
+    public ArrayList<exPath> obtenerVecinas(int modo, int x, int y){
+        ArrayList<exPath> path = new ArrayList<>();
+        if (modo == 0) {
+            if ((x-1 >= 0 && y >= 0) && (x-1 < pl.length && y < pl[x].length)){ //norte
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x-1, y, coor));
+            }
+            if ((x+1 >= 0 && y >= 0) && (x+1 < pl.length && y < pl[x].length)){ //sur
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x+1, y, coor));
+            }
+            if ((x >= 0 && y+1 >= 0) && (x < pl.length && y+1 < pl[x].length)){ //este
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x, y+1, coor));
+            }
+            if ((x >= 0 && y-1 >= 0) && (x < pl.length && y-1 < pl[x].length)){ //oeste
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x, y-1, coor));
+            }
+        } else if (modo == 1){
+            if ((x+1 >= 0 && y >= 0) && (x+1 < pl.length && y < pl[x].length)){ //sur
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x+1, y, coor));
+            }
+            if ((x-1 >= 0 && y >= 0) && (x-1 < pl.length && y < pl[x].length)){ //norte
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x-1, y, coor));
+            }
+            if ((x >= 0 && y-1 >= 0) && (x < pl.length && y-1 < pl[x].length)){ //oeste
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x, y-1, coor));
+            }
+            if ((x >= 0 && y+1 >= 0) && (x < pl.length && y+1 < pl[x].length)){ //este
+                ArrayList<Coordenadas> coor = new ArrayList<Coordenadas>();
+                coor.add(pl[x][y].getCoordenadas());
+                path.add(new exPath(x, y+1, coor));
+            }
+        }
+        return path;
+    }
+    public void setVisitada(int x, int y){
+        pl[x][y].setVisitado();
+    }
     public void setComieno(){
         comienzo = true;
+    }
+    public Casilla getCasillaComienzo() {
+        return casillaComienzo;
     }
     public Coordenadas getSize(){
         return dimension;
